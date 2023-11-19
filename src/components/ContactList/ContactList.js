@@ -6,7 +6,7 @@ export const ContactList = ({ filteredContacts }) => {
     <List>
       {filteredContacts.map(contact => (
         <li key={contact.id}>
-          <ContactsItem contact={contact} contacts={filteredContacts} />
+          <ContactsItem contact={contact} />
         </li>
       ))}
     </List>

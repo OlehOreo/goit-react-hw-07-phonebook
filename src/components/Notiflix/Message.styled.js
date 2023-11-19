@@ -5,7 +5,11 @@ export const Heading = styled.h3`
   font-weight: 400;
   line-height: 43px;
   letter-spacing: 0.09em;
-  width: 630px;
+  width: 800px;
+
+  position: absolute;
+  top: 80%;
+  left: 41%;
   color: ${p => p.theme.colors.white};
 `;
 

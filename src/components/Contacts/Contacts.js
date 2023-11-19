@@ -1,16 +1,35 @@
 import { ContactList } from 'components/ContactList/ContactList';
+import Loading from 'components/Loading/Loading';
 import { Message } from 'components/Notiflix/Message';
+import { useEffect, useState } from 'react';
+
 import { useSelector } from 'react-redux';
-import { getContacts, getSearchResults } from 'redux/selectors';
+
+import {
+  selectorContacts,
+  selectorError,
+  selectorLoading,
+} from 'redux/contactsSlice';
+import { getSearchResults } from 'redux/filterSlice';
 
 export const Contacts = () => {
-  const contacts = useSelector(getContacts);
+  const [contactLoaded, setContactLoaded] = useState(false);
+
+  const contacts = useSelector(selectorContacts);
+  const loading = useSelector(selectorLoading);
   const filter = useSelector(getSearchResults);
-  const filteredContacts = contacts.filter(({ name, number }) => {
+  const error = useSelector(selectorError);
+
+  useEffect(() => {
+    if (contacts.length !== 0) {
+      setContactLoaded(true);
+    }
+  }, [contacts]);
+  const filteredContacts = contacts.filter(({ name, phone }) => {
     if (filter.length > 0) {
       return (
         name.toLowerCase().includes(filter.toLowerCase()) ||
-        number.replace(/\D/g, '').includes(filter)
+        phone.replace(/\D/g, '').includes(filter)
       );
     }
 
@@ -19,16 +38,26 @@ export const Contacts = () => {
 
   return (
     <>
-      {contacts.length === 0 ? (
-        <Message info={'No contacts add a contact'} />
-      ) : (
+      {loading && (
+        <Loading
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        />
+      )}
+      {contacts.length !== 0 && (
         <>
+          <ContactList filteredContacts={filteredContacts} />
           {filteredContacts.length === 0 && (
             <Message info={'contact not found'} contact={filter} />
           )}
-          <ContactList filteredContacts={filteredContacts} />
         </>
       )}
+      {contacts.length === 0 && contactLoaded === true && (
+        <Message info={'No contacts add a contact'} />
+      )}
+      {error && <Message info={'Something went wrong, reload the page'} />}
     </>
   );
 };

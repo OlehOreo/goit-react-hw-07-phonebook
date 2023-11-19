@@ -11,10 +11,10 @@ import {
 } from './ContactForm.styled';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/selectors';
-import { addContact } from 'redux/contactsSlice';
-import Notiflix from 'notiflix';
+import { selectorContacts } from 'redux/contactsSlice';
+import NotiflixConfig from 'components/Notiflix/NotiflixConfig';
 import { useEffect } from 'react';
+import { addContact } from 'redux/contactOperations';
 
 const contactSchema = Yup.object().shape({
   name: Yup.string()
@@ -43,7 +43,7 @@ export const ContactForm = () => {
   }, []);
 
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectorContacts);
 
   const handlerAddContact = (fieldValue, form) => {
     const contactCheck = contacts.find(contact => {
@@ -57,14 +57,16 @@ export const ContactForm = () => {
     if (contactCheck === undefined) {
       dispatch(addContact(fieldValue));
       form.resetForm();
-      Notiflix.Notify.success(`${fieldValue.name}  add to contacts`);
+      NotiflixConfig.Notify.success(
+        `<span style="color: #babffff5;">${fieldValue.name}</span> add to contacts`
+      );
     } else if (contactCheck.name === fieldValue.name) {
-      return Notiflix.Notify.warning(
-        `${fieldValue.name}  is already in contacts`
+      return NotiflixConfig.Notify.warning(
+        `<span style="color: #babffff5;">${fieldValue.name}</span>  is already in contacts`
       );
     } else if (contactCheck.number === fieldValue.number) {
-      return Notiflix.Notify.warning(
-        `The number ${fieldValue.number}  is already in contacts ${contactCheck.name}`
+      return NotiflixConfig.Notify.warning(
+        `The number <span style="color: #babffff5;">${fieldValue.name}</span>  is already in contacts ${contactCheck.name}`
       );
     }
   };
